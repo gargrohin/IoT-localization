@@ -3,17 +3,21 @@ from itertools import islice
 import linecache
 import math
 
-lsteps=open("lsteps.txt","r")
-rsteps=open("rsteps.txt","r")
 open("lfinal.txt","w").close()
 open("rfinal.txt","w").close()
+open("lfinalc.txt","w").close()
+open("rfinalc.txt","w").close()
 delay=0.6
 prev_llen = 0
 prev_rlen = 0
 curr_lstep = [None]*3
 curr_rstep = [None]*3
+curr_lstep_corr = [None]*3
+curr_rstep_corr = [None]*3
 prev_lstep = [0]*3
-prev_rstep = [0]*3
+xbias = 10.0
+prev_rstep = [x_bias,0,0]
+
 
 def file_len(file):
 	return sum(1 for line in file)	
@@ -46,42 +50,38 @@ while True:
 	
 	if curr_llen > prev_llen:
 		prev_llen = curr_llen
-		lsteps=open("lsteps.txt","r")
+		lsteps = open("lsteps.txt","r")
 		lfinal = open("lfinal.txt","a")
-		for lline in islice(lsteps, curr_llen-1, curr_llen):
+		lfinalc = open("lfinalc.txt", "a")
+		#this loop runs only once
+		for lline in islice(lsteps, curr_llen-1, curr_llen):   
 			ls=lline.split(", ")
 			lpkt=float(ls[0])
-			curr_lstep = [float(ls[1]),float(ls[2]),float(ls[3])]
 			lang=float(ls[4])
-			curr_lstep = correct_step(prev_rstep, curr_lstep)
-			prev_lstep = curr_lstep
+			curr_lstep = [float(ls[1]),float(ls[2]),float(ls[3])]
+			curr_lstep_corr = correct_step(prev_rstep, curr_lstep)
 			lfinal.write(str(curr_lstep[0])+" "+str(curr_lstep[1])+"\n")
-			print(str(curr_lstep[0])+" "+str(curr_lstep[1]))
-			lfinal.close()
+			lfinalc.write(str(curr_lstep_corr[0])+" "+str(curr_lstep_corr[1])+"\n")
+			prev_lstep = curr_lstep_corr
+			#print(str(curr_lstep[0])+" "+str(curr_lstep[1]))
+		lfinal.close()
+		lfinalc.close()
 	
 	if curr_rlen > prev_rlen:
 		prev_rlen = curr_rlen
 		rsteps=open("rsteps.txt","r")
 		rfinal = open("rfinal.txt","a")
+		rfinalc = open("rfinalc.txt", "a")
+		#this loop runs only once
 		for rline in islice(rsteps, curr_rlen-1, curr_rlen):
 			rs=rline.split(", ")
 			rpkt=float(rs[0])
 			rang=float(rs[4])
-			curr_rstep = [float(rs[1]),float(rs[2]),float(rs[3])]
-			curr_rstep = correct_step(prev_lstep, curr_rstep)
-			prev_rstep = curr_rstep
-			rfinal.write(str(curr_rstep[0])+" "+str(curr_rstep[1])+"\n")
-			print(str(curr_rstep[0])+" "+str(curr_rstep[1]))
-			rfinal.close()
-"""
-t0 = time.time()
-print(file_len(lsteps))
-t1 = time.time()
-print("Time taken: ", t1-t0)
-"""
-"""
-lsteps=open("lsteps.txt","r")
-for line in islice(lsteps, 6, 7):
-	print(line)
-	print(type(line))
-"""
+			curr_rstep = [float(rs[1])-xbias,float(rs[2]),float(rs[3])]
+			curr_rstep_corr = correct_step(prev_lstep, curr_rstep)
+			lfinal.write(str(curr_lstep[0])+" "+str(curr_lstep[1])+"\n")
+			rfinalc.write(str(curr_rstep_corr[0])+" "+str(curr_rstep_corr[1])+"\n")
+			prev_rstep = curr_rstep_corr
+			#print(str(curr_rstep[0])+" "+str(curr_rstep[1]))
+		rfinal.close()
+		rfinalc.close()
