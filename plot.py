@@ -4,7 +4,7 @@ import time
 
 fig = plt.figure()
 ax1 = fig.add_subplot(1,2,1)
-ax2 = fig.add_subplot(1,2,2)
+#ax2 = fig.add_subplot(1,2,2)
 def animate(i):
     pullData = open("lfinal.txt","r").read()
     pullData1 = open("rfinal.txt","r").read() 
@@ -26,8 +26,8 @@ def animate(i):
             yar1.append(float(y))
     ax1.clear()
     ax1.plot(xar,yar)
-    ax2.clear()
-    ax2.plot(xar1,yar1, color = 'r') 
+    #ax2.clear()
+    ax1.plot(xar1,yar1, color = 'r') 
 
 ani = animation.FuncAnimation(fig, animate, interval=100)
 plt.show()
