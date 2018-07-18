@@ -44,7 +44,7 @@ import thread
 
 # device_ip = '172.31.5.214'
 # device_ip = '192.168.43.201'
-device_ip = '192.168.43.131'
+device_ip = '192.168.43.42'
 
 MAX_CMD_LENGTH = 6
 ACK_LEN = 4
