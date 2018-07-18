@@ -15,8 +15,9 @@ curr_rstep = [None]*3
 curr_lstep_corr = [None]*3
 curr_rstep_corr = [None]*3
 prev_lstep = [0]*3
-xbias = 10.0
-prev_rstep = [x_bias,0,0]
+xbias = 0.1
+prev_rstep = [0,0,0]
+thresh=0.5
 
 
 def file_len(file):
@@ -32,10 +33,10 @@ def dist(prev_step, curr_step):
 
 def correct_step(ref_step, curr_step):
 	step_len = dist(ref_step, curr_step)
-	if step_len > 100:
-		nx = ref_step[0] + (curr_step[0]-ref_step[0])*100/step_len
-		ny = ref_step[1] + (curr_step[1]-ref_step[1])*100/step_len
-		nz = ref_step[2] + (curr_step[2]-ref_step[2])*100/step_len
+	if step_len > thresh:
+		nx = ref_step[0] + (curr_step[0]-ref_step[0])*thresh/step_len
+		ny = ref_step[1] + (curr_step[1]-ref_step[1])*thresh/step_len
+		nz = ref_step[2] + (curr_step[2]-ref_step[2])*thresh/step_len
 		return [nx,ny,nz]
 	else:
 		return curr_step	
@@ -58,12 +59,12 @@ while True:
 			ls=lline.split(", ")
 			lpkt=float(ls[0])
 			lang=float(ls[4])
-			curr_lstep = [float(ls[1]),float(ls[2]),float(ls[3])]
+			curr_lstep = [float(ls[1])-xbias,float(ls[2]),float(ls[3])]
 			curr_lstep_corr = correct_step(prev_rstep, curr_lstep)
 			lfinal.write(str(curr_lstep[0])+" "+str(curr_lstep[1])+"\n")
 			lfinalc.write(str(curr_lstep_corr[0])+" "+str(curr_lstep_corr[1])+"\n")
 			prev_lstep = curr_lstep_corr
-			#print(str(curr_lstep[0])+" "+str(curr_lstep[1]))
+			print(str(curr_lstep[0])+" "+str(curr_lstep[1]))
 		lfinal.close()
 		lfinalc.close()
 	
@@ -79,9 +80,9 @@ while True:
 			rang=float(rs[4])
 			curr_rstep = [float(rs[1])-xbias,float(rs[2]),float(rs[3])]
 			curr_rstep_corr = correct_step(prev_lstep, curr_rstep)
-			lfinal.write(str(curr_lstep[0])+" "+str(curr_lstep[1])+"\n")
+			rfinal.write(str(curr_rstep[0])+" "+str(curr_rstep[1])+"\n")
 			rfinalc.write(str(curr_rstep_corr[0])+" "+str(curr_rstep_corr[1])+"\n")
 			prev_rstep = curr_rstep_corr
-			#print(str(curr_rstep[0])+" "+str(curr_rstep[1]))
+			print(str(curr_rstep[0])+" "+str(curr_rstep[1]))
 		rfinal.close()
 		rfinalc.close()

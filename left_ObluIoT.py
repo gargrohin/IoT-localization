@@ -263,7 +263,7 @@ class DeviceClient(threading.Thread):
         dx = self.prev_x - x
         dy = self.prev_y - y
         distance = math.sqrt(dx * dx + dy * dy)
-        if (distance > 0.05):
+        if (distance > 0.02):
             if self.outfile :
                 str = "%d, %0.2f, %0.2f, %0.2f, %0.2f\n" % (self.pkt_counter, -x, y, -z, phi)
                 self.outfile.write(str)
